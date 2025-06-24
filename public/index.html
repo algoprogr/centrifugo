@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Centrifugo WebSocket Test</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <style>
+      /* Reset */
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        overflow: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar {
+        display: none;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: url("/bg.jpg");
+        background-size: cover;
+        color: #333;
+        margin: 0;
+        padding: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      main {
+        max-width: 600px;
+        width: 100%;
+        background: #ffffff;
+        padding: 3rem 3.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11),
+          0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+      h1 {
+        margin-top: 0;
+        margin-bottom: 2rem;
+        font-weight: 800;
+        color: #2c3e50;
+        text-align: center;
+        font-size: 2.25rem;
+      }
+      #config,
+      #status {
+        background: #f7fafc;
+        border-left: 6px solid #3498db;
+        padding: 1rem 1.5rem;
+        margin: 1.5rem 0;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        color: #34495e;
+      }
+      #status {
+        border-color: #e67e22;
+        font-weight: 700;
+        text-align: center;
+        font-size: 1.2rem;
+        color: #d35400;
+      }
+      .status-dot {
+        font-size: 1.3rem;
+        vertical-align: middle;
+        display: inline-block;
+        animation: pulseGlow 2s infinite alternate;
+        color: #27ae60;
+        text-shadow: 0 0 5px #2ecc71, 0 0 10px #2ecc71, 0 0 15px #27ae60,
+          0 0 20px #2ecc71, 0 0 30px #27ae60;
+      }
+      .status-dot.red {
+        color: #e74c3c;
+        text-shadow: 0 0 5px #e74c3c, 0 0 10px #e74c3c, 0 0 15px #c0392b,
+          0 0 20px #e74c3c, 0 0 30px #c0392b;
+      }
+      @keyframes pulseGlow {
+        0% {
+          text-shadow: 0 0 5px currentColor, 0 0 10px currentColor,
+            0 0 15px currentColor;
+        }
+        100% {
+          text-shadow: 0 0 10px currentColor, 0 0 20px currentColor,
+            0 0 30px currentColor;
+        }
+      }
+
+      /* Form, messages, etc. - same as before */
+      #messagesContainer {
+        display: none;
+        margin-top: 2rem;
+      }
+      #messagesContainer strong {
+        display: block;
+        margin-bottom: 0.75rem;
+        font-weight: 700;
+      }
+      #messages {
+        background: #fefefe;
+        border: 1px solid #d1d9e6;
+        border-radius: 8px;
+        padding: 1rem 1.5rem;
+        max-height: 320px;
+        overflow-y: auto;
+        font-family: "Courier New", Courier, monospace;
+      }
+      #messages li {
+        list-style: none;
+        padding: 0.6rem 1rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        margin-bottom: 0.6rem;
+      }
+
+      form label {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+      }
+      form label span {
+        margin-bottom: 0.5rem;
+      }
+      form input {
+        padding: 0.6rem 0.9rem;
+        border-radius: 8px;
+        border: 1.5px solid #cbd5e1;
+      }
+      form button {
+        background-color: #3498db;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border-radius: 12px;
+        cursor: pointer;
+        margin-top: 2rem;
+        border: none;
+        width: 100%;
+        box-sizing: border-box; /* ✅ ensures width works as expected */
+        display: block; /* ✅ ensures full width in layout */
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Centrifugo WebSocket Test</h1>
+      <form id="configForm">
+        <label for="wsUrl">
+          <span>WebSocket URL:</span>
+          <input id="wsUrl" name="wsUrl" type="text" required />
+        </label>
+        <label for="allowedOrigins">
+          <span>Allowed Origins:</span>
+          <input
+            id="allowedOrigins"
+            name="allowedOrigins"
+            type="text"
+            required
+          />
+        </label>
+        <label for="userId">
+          <span>User ID:</span>
+          <input
+            id="userId"
+            name="userId"
+            type="text"
+            value="test-user"
+            required
+          />
+        </label>
+        <label for="secretKey">
+          <span>Centrifugo Secret Key:</span>
+          <input
+            id="secretKey"
+            name="secretKey"
+            type="password"
+            required
+            autocomplete="off"
+          />
+        </label>
+        <button type="submit">Connect</button>
+      </form>
+
+      <div id="config"></div>
+      <div id="status">🔄 Connecting...</div>
+
+      <div id="messagesContainer">
+        <strong>Messages:</strong>
+        <ul id="messages"></ul>
+      </div>
+    </main>
+
+    <script src="/centrifuge.min.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>
